@@ -1,0 +1,44 @@
+name: Daily Build
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 3 * * *'  # 3:00 AM UTC daily
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: |
+          VERSION=$(date +%Y%m%d%H%M%S)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Build all platforms
+        run: make build VERSION=${{ steps.version.outputs.VERSION }}
+
+      - name: Delete existing daily release
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete daily --yes || true
+          git push origin :refs/tags/daily || true
+
+      - name: Create daily release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create daily \
+            --title "Daily Build - ${{ steps.version.outputs.VERSION }}" \
+            --notes "Automated daily build from commit ${{ github.sha }}" \
+            --prerelease \
+            ./binaries/*

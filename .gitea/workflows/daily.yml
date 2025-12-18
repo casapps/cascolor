@@ -1,0 +1,38 @@
+name: Daily Build
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 3 * * *'  # 3:00 AM UTC daily
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: |
+          VERSION=$(date +%Y%m%d%H%M%S)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Build all platforms
+        run: make build VERSION=${{ steps.version.outputs.VERSION }}
+
+      - name: Delete existing daily release
+        continue-on-error: true
+        run: |
+          # Gitea release deletion (adapt based on Gitea API)
+          echo "Deleting previous daily release if exists..."
+
+      - name: Create daily release
+        run: |
+          # Create release using Gitea CLI or API
+          # This will need to be adapted based on your Gitea setup
+          echo "Creating daily release ${{ steps.version.outputs.VERSION }}"
+          # Upload binaries from ./binaries/*

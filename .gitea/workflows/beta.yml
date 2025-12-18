@@ -1,0 +1,40 @@
+name: Beta Release
+
+on:
+  push:
+    tags:
+      - '*beta*'
+      - 'v*beta*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          VERSION="${VERSION#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+          
+          # Validate beta version
+          if ! echo "$VERSION" | grep -q "beta"; then
+            echo "Error: Version must contain 'beta'"
+            exit 1
+          fi
+
+      - name: Update release.txt
+        run: echo "${{ steps.version.outputs.VERSION }}" > release.txt
+
+      - name: Build all platforms
+        run: make build VERSION=${{ steps.version.outputs.VERSION }}
+
+      - name: Create beta release
+        run: |
+          # Create release using Gitea API
+          echo "Creating beta release ${{ steps.version.outputs.VERSION }}"
+          # Upload binaries from ./binaries/*

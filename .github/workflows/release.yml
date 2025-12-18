@@ -1,0 +1,63 @@
+name: Stable Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+            VERSION="${VERSION#v}"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+          
+          # Validate stable version (no beta/alpha/etc)
+          if echo "$VERSION" | grep -qE "beta|alpha|rc"; then
+            echo "Error: Stable version cannot contain pre-release identifiers"
+            exit 1
+          fi
+
+      - name: Update release.txt
+        run: echo "${{ steps.version.outputs.VERSION }}" > release.txt
+
+      - name: Build all platforms
+        run: make build VERSION=${{ steps.version.outputs.VERSION }}
+
+      - name: Create stable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ steps.version.outputs.VERSION }} \
+            --title "cascolor v${{ steps.version.outputs.VERSION }}" \
+            --notes "Stable release ${{ steps.version.outputs.VERSION }}" \
+            ./binaries/*
+
+      - name: Increment version
+        run: make increment-version
+
+      - name: Commit updated version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add release.txt
+          git commit -m "chore: bump version after release" || true
+          git push || true

@@ -1,0 +1,27 @@
+# VCS
+.git/
+.github/
+.gitea/
+.gitignore
+
+# Build artifacts
+/target/
+/binaries/
+/releases/
+
+# Documentation
+*.md
+LICENSE.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+config.toml

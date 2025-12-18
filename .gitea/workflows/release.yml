@@ -1,0 +1,51 @@
+name: Stable Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          VERSION="${VERSION#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+          
+          # Validate stable version
+          if echo "$VERSION" | grep -qE "beta|alpha|rc"; then
+            echo "Error: Stable version cannot contain pre-release identifiers"
+            exit 1
+          fi
+
+      - name: Update release.txt
+        run: echo "${{ steps.version.outputs.VERSION }}" > release.txt
+
+      - name: Build all platforms
+        run: make build VERSION=${{ steps.version.outputs.VERSION }}
+
+      - name: Create stable release
+        run: |
+          # Create release using Gitea API
+          echo "Creating stable release ${{ steps.version.outputs.VERSION }}"
+          # Upload binaries from ./binaries/*
+
+      - name: Increment version
+        run: make increment-version
+
+      - name: Commit updated version
+        run: |
+          git config user.name "gitea-actions[bot]"
+          git config user.email "gitea-actions[bot]@users.noreply.local"
+          git add release.txt
+          git commit -m "chore: bump version after release" || true
+          git push || true

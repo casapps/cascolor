@@ -1,0 +1,24 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Build outputs
+/binaries/
+/releases/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Config (local testing)
+config.toml
+
+# Environment
+.env
+.env.local
