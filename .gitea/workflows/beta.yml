@@ -34,7 +34,4 @@ jobs:
         run: make build VERSION=${{ steps.version.outputs.VERSION }}
 
       - name: Create beta release
-        run: |
-          # Create release using Gitea API
-          echo "Creating beta release ${{ steps.version.outputs.VERSION }}"
-          # Upload binaries from ./binaries/*
+        run: make release VERSION=${{ steps.version.outputs.VERSION }}

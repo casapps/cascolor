@@ -24,15 +24,5 @@ jobs:
       - name: Build all platforms
         run: make build VERSION=${{ steps.version.outputs.VERSION }}
 
-      - name: Delete existing daily release
-        continue-on-error: true
-        run: |
-          # Gitea release deletion (adapt based on Gitea API)
-          echo "Deleting previous daily release if exists..."
-
       - name: Create daily release
-        run: |
-          # Create release using Gitea CLI or API
-          # This will need to be adapted based on your Gitea setup
-          echo "Creating daily release ${{ steps.version.outputs.VERSION }}"
-          # Upload binaries from ./binaries/*
+        run: make release VERSION=${{ steps.version.outputs.VERSION }}

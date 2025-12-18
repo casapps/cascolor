@@ -34,13 +34,7 @@ jobs:
         run: make build VERSION=${{ steps.version.outputs.VERSION }}
 
       - name: Create stable release
-        run: |
-          # Create release using Gitea API
-          echo "Creating stable release ${{ steps.version.outputs.VERSION }}"
-          # Upload binaries from ./binaries/*
-
-      - name: Increment version
-        run: make increment-version
+        run: make release VERSION=${{ steps.version.outputs.VERSION }}
 
       - name: Commit updated version
         run: |

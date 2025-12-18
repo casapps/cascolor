@@ -36,15 +36,15 @@ build:
 	@chmod -R u+w $(BINARIES_DIR) $(RELEASES_DIR) 2>/dev/null || true
 	
 	@echo "Building x86_64-linux..."
-	@docker run --rm \
+	@docker run --rm --platform linux/amd64 \
 		-v "$(PWD)":/workspace \
 		-v "$(PWD)/binaries":/output \
 		-w /workspace $(DOCKER_IMAGE) bash -c ' \
 		apt-get update -qq && \
 		apt-get install -y -qq libgtk-3-dev libglib2.0-dev libpango1.0-dev libcairo2-dev libgdk-pixbuf-2.0-dev libatk1.0-dev libdbus-1-dev libxdo-dev pkg-config && \
-		cargo build --release --target x86_64-unknown-linux-gnu && \
-		strip target/x86_64-unknown-linux-gnu/release/$(PROJECT_NAME) 2>/dev/null || true && \
-		cp target/x86_64-unknown-linux-gnu/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-x86_64 && \
+		cargo build --release && \
+		strip target/release/$(PROJECT_NAME) 2>/dev/null || true && \
+		cp target/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-x86_64 && \
 		chmod 755 /output/$(PROJECT_NAME)-linux-x86_64'
 	@echo "✓ Built linux-x86_64"
 	
