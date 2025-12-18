@@ -49,19 +49,17 @@ build:
 	@echo "✓ Built linux-x86_64"
 	
 	@echo "Building aarch64-linux..."
-	@docker run --rm \
+	@docker run --rm --platform linux/arm64 \
 		-v "$(PWD)":/workspace \
 		-v "$(PWD)/binaries":/output \
 		-w /workspace $(DOCKER_IMAGE) bash -c ' \
 		apt-get update -qq && \
-		apt-get install -y -qq gcc-aarch64-linux-gnu crossbuild-essential-arm64 && \
-		rustup target add aarch64-unknown-linux-gnu && \
-		export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc && \
-		cargo build --release --target aarch64-unknown-linux-gnu && \
-		aarch64-linux-gnu-strip target/aarch64-unknown-linux-gnu/release/$(PROJECT_NAME) 2>/dev/null || true && \
-		cp target/aarch64-unknown-linux-gnu/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-arm64 && \
-		chmod 755 /output/$(PROJECT_NAME)-linux-arm64'
-	@echo "✓ Built linux-arm64"
+		apt-get install -y -qq libgtk-3-dev libglib2.0-dev libpango1.0-dev libcairo2-dev libgdk-pixbuf-2.0-dev libatk1.0-dev libdbus-1-dev libxdo-dev pkg-config && \
+		cargo build --release && \
+		strip target/release/$(PROJECT_NAME) 2>/dev/null || true && \
+		cp target/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-aarch64 && \
+		chmod 755 /output/$(PROJECT_NAME)-linux-aarch64'
+	@echo "✓ Built linux-aarch64"
 	
 	@echo "Building x86_64-windows..."
 	@docker run --rm \
