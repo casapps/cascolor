@@ -51,18 +51,8 @@ build:
 	@echo "Skipping aarch64-linux (requires native ARM64 hardware)"
 	@echo "✓ Skipped linux-aarch64"
 	
-	@echo "Building x86_64-windows..."
-	@docker run --rm \
-		-v "$(PWD)":/workspace \
-		-v "$(PWD)/binaries":/output \
-		-w /workspace $(DOCKER_IMAGE) bash -c ' \
-		rustup target add x86_64-pc-windows-gnu && \
-		apt-get update -qq && apt-get install -y -qq mingw-w64 && \
-		cargo build --release --target x86_64-pc-windows-gnu && \
-		x86_64-w64-mingw32-strip target/x86_64-pc-windows-gnu/release/$(PROJECT_NAME).exe 2>/dev/null || true && \
-		cp target/x86_64-pc-windows-gnu/release/$(PROJECT_NAME).exe /output/$(PROJECT_NAME)-windows-x86_64.exe && \
-		chmod 755 /output/$(PROJECT_NAME)-windows-x86_64.exe'
-	@echo "✓ Built windows-x86_64"
+	@echo "Skipping x86_64-windows (GTK4 not supported via MinGW cross-compile)"
+	@echo "✓ Skipped windows-x86_64"
 	
 	@echo "Building x86_64-macos..."
 	@echo "⚠ macOS builds require macOS host or osxcross toolchain (skipped)"
