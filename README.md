@@ -29,10 +29,13 @@ Built with Apple-level attention to UX design, featuring clean layouts, smooth i
 
 Download the latest release for your platform from the [releases page](https://github.com/casapps/cascolor/releases):
 
-- **Linux**: `cascolor-linux-x86_64` or `cascolor-linux-aarch64`
-- **Windows**: `cascolor-windows-x86_64.exe`
-- **macOS**: `cascolor-macos-x86_64` or `cascolor-macos-aarch64`
-- **FreeBSD**: `cascolor-freebsd-x86_64` or `cascolor-freebsd-aarch64`
+- **Linux x86_64**: `cascolor-linux-x86_64`
+- **Linux ARM64**: `cascolor-linux-aarch64`
+- **Windows x86_64**: `cascolor-windows-x86_64.exe`
+- **macOS x86_64**: `cascolor-macos-x86_64`
+- **macOS ARM64**: `cascolor-macos-aarch64`
+- **FreeBSD x86_64**: `cascolor-freebsd-x86_64`
+- **FreeBSD ARM64**: `cascolor-freebsd-aarch64`
 
 ### Quick Install (Linux/macOS)
 
@@ -43,8 +46,8 @@ curl -sSL https://raw.githubusercontent.com/casapps/cascolor/main/scripts/instal
 ### Manual Installation
 
 1. Download the appropriate binary for your system
-2. Make it executable: `chmod +x cascolor-*`
-3. Move to your PATH: `sudo mv cascolor-* /usr/local/bin/cascolor`
+2. Make it executable: `chmod +x cascolor-linux-x86_64`
+3. Move to your PATH: `sudo mv cascolor-linux-x86_64 /usr/local/bin/cascolor`
 
 ## Usage
 
@@ -101,8 +104,9 @@ default_color_format = "hex" # Default format shown
 
 ### Prerequisites
 
-- Docker (for building)
+- **Docker** (REQUIRED for building)
 - Git
+- `gh` CLI (for releases)
 
 ### Building from Source
 
@@ -111,15 +115,41 @@ default_color_format = "hex" # Default format shown
 git clone https://github.com/casapps/cascolor.git
 cd cascolor
 
-# Build for all platforms
+# Build for all platforms (Docker-based)
 make build
 
-# Build for current platform only (faster)
-make build-local
-
-# Run tests
+# Run tests (Docker-based)
 make test
+
+# Create release (Docker-based)
+make release
 ```
+
+### Docker Build System
+
+All builds use Docker to ensure consistent, reproducible binaries:
+
+```makefile
+# Linux x86_64 (with GUI dependencies)
+docker run --rm --platform linux/amd64 \
+  -v "$(PWD)":/workspace \
+  rust:latest bash -c '
+    apt-get update && 
+    apt-get install -y libgtk-3-dev libglib2.0-dev pkg-config &&
+    cargo build --release'
+
+# Windows x86_64 (cross-compile from Linux)
+docker run --rm rust:latest bash -c '
+  rustup target add x86_64-pc-windows-gnu &&
+  apt-get update && apt-get install -y mingw-w64 &&
+  cargo build --release --target x86_64-pc-windows-gnu'
+```
+
+**Why Docker?**
+- Consistent build environment across all platforms
+- No need to install Rust/dependencies locally
+- Cross-compilation made simple
+- CI/CD friendly
 
 ### Project Structure
 

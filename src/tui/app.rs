@@ -69,6 +69,10 @@ impl TuiApp {
                         }
                     }
                     Event::Mouse(mouse) => self.handle_mouse_event(mouse),
+                    Event::Resize(_width, _height) => {
+                        // Terminal was resized (SIGWINCH on *nix)
+                        // Ratatui automatically handles this, just redraw
+                    }
                     _ => {}
                 }
             }

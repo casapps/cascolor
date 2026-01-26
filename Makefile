@@ -49,7 +49,17 @@ build:
 	@echo "✓ Built linux-x86_64"
 	
 	@echo "Building aarch64-linux..."
-	@echo "⚠ aarch64-linux requires ARM64 runner or cross-compilation (skipped)"
+	@docker run --rm \
+		-v "$(PWD)":/workspace \
+		-v "$(PWD)/binaries":/output \
+		-w /workspace \
+		-e CROSS_CONTAINER_IN_CONTAINER=true \
+		ghcr.io/cross-rs/cross:aarch64-unknown-linux-gnu bash -c ' \
+		cargo build --release --target aarch64-unknown-linux-gnu && \
+		aarch64-linux-gnu-strip target/aarch64-unknown-linux-gnu/release/$(PROJECT_NAME) 2>/dev/null || true && \
+		cp target/aarch64-unknown-linux-gnu/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-aarch64 && \
+		chmod 755 /output/$(PROJECT_NAME)-linux-aarch64'
+	@echo "✓ Built linux-aarch64"
 	
 	@echo "Building x86_64-windows..."
 	@docker run --rm \
