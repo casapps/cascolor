@@ -32,8 +32,9 @@ xcap = "0.0.9"
 self_update = { version = "0.41", default-features = false, features = ["archive-tar", "archive-zip", "compression-flate2", "compression-zip-deflate", "rustls"] }
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
 
-# GUI
-iced = { version = "0.13", features = ["tokio", "advanced", "canvas"] }
+# GUI - Platform native
+gtk4 = { version = "0.9", features = ["v4_12"] }
+libadwaita = { version = "0.7" }
 screenshots = "0.6"
 image = "0.25"
 tray-icon = "0.18"
