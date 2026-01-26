@@ -49,17 +49,7 @@ build:
 	@echo "✓ Built linux-x86_64"
 	
 	@echo "Building aarch64-linux..."
-	@docker run --rm --platform linux/arm64 \
-		-v "$(PWD)":/workspace \
-		-v "$(PWD)/binaries":/output \
-		-w /workspace $(DOCKER_IMAGE) bash -c ' \
-		apt-get update -qq && \
-		apt-get install -y -qq libgtk-3-dev libglib2.0-dev libpango1.0-dev libcairo2-dev libgdk-pixbuf-2.0-dev libatk1.0-dev libdbus-1-dev libxdo-dev pkg-config && \
-		cargo build --release && \
-		strip target/release/$(PROJECT_NAME) 2>/dev/null || true && \
-		cp target/release/$(PROJECT_NAME) /output/$(PROJECT_NAME)-linux-aarch64 && \
-		chmod 755 /output/$(PROJECT_NAME)-linux-aarch64'
-	@echo "✓ Built linux-aarch64"
+	@echo "⚠ aarch64-linux requires ARM64 runner or cross-compilation (skipped)"
 	
 	@echo "Building x86_64-windows..."
 	@docker run --rm \

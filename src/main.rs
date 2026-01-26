@@ -66,11 +66,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     if use_tui {
         tui::run(config)?;
+        Ok(())
     } else {
-        gui::run(config)?;
+        gui::run(config).map_err(|e| Box::new(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())) as Box<dyn std::error::Error>)
     }
-    
-    Ok(())
 }
 
 fn should_use_tui() -> bool {

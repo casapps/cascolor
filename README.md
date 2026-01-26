@@ -6,19 +6,22 @@ A beautiful, cross-platform color picker with GUI and TUI support. Single static
 
 **cascolor** is a modern color picker application written in Rust that automatically adapts to your environment. Whether you're working in a graphical desktop environment or over SSH, cascolor provides a consistent and intuitive interface for selecting, converting, and managing colors.
 
+Built with Apple-level attention to UX design, featuring clean layouts, smooth interactions, and progressive disclosure of advanced features.
+
 ### Features
 
 - **Multiple Color Formats**: HEX, RGB, RGBA, HSL, HSLA, HSV, HSB, CMYK, Lab, LCh, Luv, XYZ, Oklab, Oklch, and CSS Named Colors
 - **Dual Interface**: 
-  - **GUI Mode**: Beautiful native interface with X11/Wayland support (Linux), native Windows and macOS support
+  - **GUI Mode**: Beautiful Iced-based interface with smooth sliders, live preview, and one-click copy
   - **TUI Mode**: Terminal UI for remote sessions or systems without display
-- **Interactive Controls**: Sliders with drag support, direct text input, and one-click copy buttons
-- **Eyedropper Tool**: Pick colors directly from your screen
-- **Color History**: Automatically saves your last 20 colors (configurable)
+- **Interactive Controls**: HSL sliders with live preview, direct text input, and instant copy buttons
+- **Eyedropper Tool**: Pick colors directly from your screen (GUI mode)
+- **Color History**: Automatically saves your last 20 colors with visual preview
 - **Auto-Update**: Built-in update system with stable, beta, and daily channels
 - **Themeable**: Dark (default), Light, System, and Auto (time-based) themes
 - **Cross-Platform**: Linux, Windows, macOS, and FreeBSD support
-- **System Tray**: Optional system tray integration (can be disabled)
+- **Progressive Disclosure**: Advanced formats hidden until needed - keeps UI clean
+- **Keyboard-Friendly**: Full keyboard navigation in both GUI and TUI modes
 
 ## Installation
 
